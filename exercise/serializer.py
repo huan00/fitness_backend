@@ -9,5 +9,19 @@ class ExerciseSerializer(serializers.ModelSerializer):
       'name',
       'gifUrl',
       'target',
-      'bodyParts'
+      'bodyParts',
+      'equipment'
     )
+
+class NewExerciseSerializer(serializers.ModelSerializer):
+  class Meta: model = Exercise
+  fields = (
+    'name',
+    'gifUrl',
+    'target',
+    'bodyParts',
+    'equipment',
+  )
+  def create(self, validated_data):
+    # exercise_data = validated_data()
+    return Exercise.objects.create(**validated_data)

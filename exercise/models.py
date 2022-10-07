@@ -5,12 +5,14 @@ from django.db import models
 
 class Exercise(models.Model):
     name = models.CharField(max_length=255)
-    bodyParts = models.JSONField()
-    gifUrl = models.CharField(max_length=255)
-    target = models.JSONField()
+    bodyParts = models.JSONField(default=list)
+    gifUrl = models.CharField(max_length=255, default='')
+    target = models.JSONField(default=list)
+    equipment = models.JSONField(default=list)
 
     class Meta:
       ordering = ('name',)
     
     def __str__(self):
       return self.name
+

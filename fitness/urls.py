@@ -20,5 +20,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/exercise/', include('exercise.urls')),
+    path('api/fitness/', include('djoser.urls')),
+    path('api/fitness/', include('djoser.urls.authtoken')),
+    path('api/fitness/', include('exercise.urls')),
+    path('api/fitness/', include('exercise_tracker.urls'))
 ]

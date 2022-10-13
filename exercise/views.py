@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializer import ExerciseSerializer
+from .serializers import ExerciseSerializer
 from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework.decorators import api_view

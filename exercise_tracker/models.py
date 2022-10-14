@@ -19,8 +19,8 @@ class Session(models.Model):
     day = [(MONDAY, 'Monday'), (TUESDAY, 'Tuesday'), (WEDNESDAY, 'Wednesday'), (THURSDAY,
                                                                                 'Thursday'), (FRIDAY, 'Friday'), (SATURDAY, 'Saturday'), (SUNDAY, 'Sunday')]
 
-    user = models.ForeignKey(
-        User, related_name='session', on_delete=models.CASCADE)
+    # user = models.ForeignKey(
+    #     User, related_name='session', on_delete=models.CASCADE)
     workout_day = models.CharField(max_length=4, choices=day, default=MONDAY)
     focus_area = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -38,7 +38,7 @@ class Workout(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return '%s' % self.created_at
+        return self.session.workout_day + ' workout'
 
 
 class ExerciseSet(models.Model):
@@ -47,8 +47,8 @@ class ExerciseSet(models.Model):
     workout = models.ForeignKey(
         Workout, related_name='exercise_set', on_delete=models.CASCADE, null=True)
     # pull exercise from exercise
-    set = models.IntegerField(default=0)
-    rep = models.IntegerField(default=1)
+    set = models.IntegerField()
+    rep = models.IntegerField()
     weight = models.IntegerField(default=0)
 
     class Meta:

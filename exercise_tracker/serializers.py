@@ -5,7 +5,6 @@ from exercise.serializers import ExerciseSerializer
 
 
 class MyExerciseSetSerializer(serializers.ModelSerializer):
-    exercise = ExerciseSerializer()
 
     class Meta:
         model = ExerciseSet
@@ -13,17 +12,14 @@ class MyExerciseSetSerializer(serializers.ModelSerializer):
             'set',
             'rep',
             'weight',
-            'exercise',
         )
 
 
 class ExerciseSetSerializer(serializers.ModelSerializer):
-    exercise = ExerciseSerializer()
 
     class Meta:
         model = ExerciseSet
         fields = (
-            'exercise',
             'set',
             'rep',
             'weight',
@@ -42,12 +38,14 @@ class ExerciseSetSerializer(serializers.ModelSerializer):
 
 class MyWorkoutSerializer(serializers.ModelSerializer):
     exercise_set = MyExerciseSetSerializer(many=True)
+    exercise = ExerciseSerializer()
 
     class Meta:
         model = Workout
         fields = (
             'created_at',
-            'exercise_set'
+            'exercise_set',
+            'exercise'
         )
 
 
@@ -66,11 +64,13 @@ class MySessionSerializer(serializers.ModelSerializer):
 
 class WorkoutSerializer(serializers.ModelSerializer):
     exercise_set = ExerciseSetSerializer(many=True)
+    exercise = ExerciseSerializer()
 
     class Meta:
         model = Workout
         fields = (
             'exercise_set',
+            'exercise'
         )
 
     def create(self, validated_data):
@@ -106,27 +106,43 @@ class SessionSerializer(serializers.ModelSerializer):
         # loop through workout data to create sets
         for workout_data in workouts_data:
             exercises_set = workout_data.pop('exercise_set')
+            exercise = workout_data.pop('exercise')
             # create workout associated with session
-            workout = Workout.objects.create(session=session, **workout_data)
+
+            try:
+                checkExercise = Exercise.objects.get(name=exercise['name'])
+
+                workout_data['exercise'] = checkExercise
+
+                workout = Workout.objects.create(
+                    session=session, **workout_data)
+
+            except Exercise.DoesNotExist:
+                newExercise = Exercise.objects.create(**exercise)
+
+                workout_data['exercise'] = newExercise
+
+                workout = Workout.objects.create(
+                    session=session, **workout_data)
 
             # loop through exercises set to create exercise
             for exercise_set in exercises_set:
-                exercise = exercise_set.pop('exercise')
+                # exercise = exercise_set.pop('exercise')
 
-                try:
-                    # check if exercise exist or not.
-                    checkExercise = Exercise.objects.get(name=exercise['name'])
+                # try:
+                # check if exercise exist or not.
+                # checkExercise = Exercise.objects.get(name=exercise['name'])
 
-                    # if work out exercise exist append to exercise set, and create exercise set
-                    exercise_set['exercise'] = checkExercise
-                    ExerciseSet.objects.create(
-                        workout=workout, **exercise_set)
+                # if work out exercise exist append to exercise set, and create exercise set
+                # exercise_set['exercise'] = checkExercise
+                ExerciseSet.objects.create(
+                    workout=workout, **exercise_set)
 
-                except Exercise.DoesNotExist:
-                    # create new exercise if doesn't exist and create exercise set.
-                    newExercise = Exercise.objects.create(**exercise)
-                    exercise_set['exercise'] = newExercise
-                    ExerciseSet.objects.create(
-                        workout=workout, **exercise_set)
+                # except Exercise.DoesNotExist:
+                # create new exercise if doesn't exist and create exercise set.
+                # newExercise = Exercise.objects.create(**exercise)
+                # exercise_set['exercise'] = newExercise
+                # ExerciseSet.objects.create(
+                #     workout=workout, **exercise_set)
 
         return session

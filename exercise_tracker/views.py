@@ -13,15 +13,16 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 
 
 @api_view(['POST'])
-# @authentication_classes([authentication.TokenAuthentication])
-# @permission_classes([permissions.IsAuthenticated])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def saveSession(request):
     serializer = SessionSerializer(data=request.data)
     # print(serializer)
+    print(request.user)
 
     if serializer.is_valid():  # check to make sure submitted data match serializer
-        # serializer.save(user=request.user)
-        serializer.save()
+        serializer.save(user=request.user)
+        # serializer.save()
         try:
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
@@ -42,11 +43,11 @@ def saveExerciseSet(request):
 
 
 class SessionsHistory(APIView):
-    # authentication_classes = [authentication.TokenAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        # sessions = Session.objects.filter(user=request.user)
-        sessions = Session.objects.all()
+        sessions = Session.objects.filter(user=request.user)
+        # sessions = Session.objects.all()
         serializer = MySessionSerializer(sessions, many=True)
-        return (Response(serializer.data))
+        return Response(serializer.data)

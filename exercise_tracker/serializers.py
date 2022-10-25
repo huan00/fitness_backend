@@ -127,22 +127,10 @@ class SessionSerializer(serializers.ModelSerializer):
 
             # loop through exercises set to create exercise
             for exercise_set in exercises_set:
-                # exercise = exercise_set.pop('exercise')
-
-                # try:
-                # check if exercise exist or not.
-                # checkExercise = Exercise.objects.get(name=exercise['name'])
-
-                # if work out exercise exist append to exercise set, and create exercise set
-                # exercise_set['exercise'] = checkExercise
                 ExerciseSet.objects.create(
                     workout=workout, **exercise_set)
 
-                # except Exercise.DoesNotExist:
-                # create new exercise if doesn't exist and create exercise set.
-                # newExercise = Exercise.objects.create(**exercise)
-                # exercise_set['exercise'] = newExercise
-                # ExerciseSet.objects.create(
-                #     workout=workout, **exercise_set)
-
         return session
+
+    # def update(self, validated_data):
+    #     pass

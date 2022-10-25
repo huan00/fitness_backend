@@ -9,19 +9,8 @@ from exercise.models import Exercise
 
 
 class Session(models.Model):
-    # MONDAY = 'MON'
-    # TUESDAY = 'TUE'
-    # WEDNESDAY = 'WED'
-    # THURSDAY = 'THUR'
-    # FRIDAY = 'FRI'
-    # SATURDAY = 'SAT'
-    # SUNDAY = 'SUN'
-    # day = [(MONDAY, 'Monday'), (TUESDAY, 'Tuesday'), (WEDNESDAY, 'Wednesday'), (THURSDAY,
-    #                                                                             'Thursday'), (FRIDAY, 'Friday'), (SATURDAY, 'Saturday'), (SUNDAY, 'Sunday')]
-
-    # user = models.ForeignKey(
-    #     User, related_name='session', on_delete=models.CASCADE)
-    # workout_day = models.CharField(max_length=4, choices=day, default=MONDAY)
+    user = models.ForeignKey(User, related_name='session',
+                             on_delete=models.CASCADE, null=True)
     workout_day = models.TextField(max_length=100)
     focus_area = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,19 +22,20 @@ class Session(models.Model):
         pass
 
     def __str__(self):
-        return self.workout_day
+        workout_Focus = (' '.join(self.focus_area))
+        return self.workout_day + " Focus- " + workout_Focus
 
 
 class Workout(models.Model):
     session = models.ForeignKey(
         Session, related_name='workout', on_delete=models.CASCADE, null=True)
     exercise = models.ForeignKey(
-        Exercise, related_name='exercise', on_delete=models.CASCADE, null=True)
+        Exercise, related_name='exercise', on_delete=models.PROTECT, null=True)
     # pull exercise from exercise
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return self.session.workout_day + ' workout'
+        return self.exercise.name
 
 
 class ExerciseSet(models.Model):
@@ -59,4 +49,4 @@ class ExerciseSet(models.Model):
         ordering = ('set', )
 
     def __str__(self):
-        return self.exercise.name
+        return '%s' % self.set
